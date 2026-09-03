@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  /*
+   * A ledger, not a showroom. Teacher Motors' own bio calls them a "lending
+   * centre" before it calls them a dealership, and the finance line is the
+   * one thing repeated across nearly every post. So this palette is a bank
+   * statement's: paper, ink, and one gold rule reserved strictly for a term
+   * that is actually financial — never spent on a car, a badge, or a mood.
+   *
+   * The gold is measured up from a warm brass rather than lifted from any
+   * of their photography — they publish no consistent brand colour at all,
+   * which no other dealership in this series has been true of.
+   */
+  --color-paper: #f2efe8; /* the ground */
+  --color-paper-2: #e7e2d6; /* raised / card */
+  --color-paper-3: #d8d0bd; /* rules only — never text */
+  --color-ink: #17171a; /* 15.6:1 on paper */
+  --color-ink-2: #5b584e; /* 6.2:1 on paper */
+  --color-gold: #75581a; /* 5.8:1 on paper — the ledger accent, financial terms only */
+  --color-gold-bright: #c79a3e; /* fills and glows only, never text on paper */
+
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-ibm-sans), system-ui, sans-serif;
+  --font-arabic-display: var(--font-aref), "Times New Roman", serif;
+  --font-arabic-body: var(--font-ibm-arabic), system-ui, sans-serif;
+
+  --text-hero: clamp(2rem, 5vw, 4.3rem);
+  --text-display: clamp(1.55rem, 3vw, 2.5rem);
+  --text-lead: clamp(1rem, 1.1vw, 1.15rem);
+
+  /* A ledger line does not ease, it posts. */
+  --ease-post: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  section[id] { scroll-margin-top: 5.5rem; }
+
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: auto;
+  }
+
+  body { font-family: var(--font-body); overflow-x: hidden; }
+  html[dir="rtl"] body { font-family: var(--font-arabic-body); }
+
+  ::selection { background: var(--color-gold-bright); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility font-display { font-family: var(--font-display); }
+html[dir="rtl"] .font-display { font-family: var(--font-arabic-display); }
+
+@utility label {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+html[dir="rtl"] .label {
+  font-family: var(--font-arabic-body);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.84rem;
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* A published figure, set the way a statement sets one. */
+@utility ledger {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion signature: the post.
+ *
+ * A ledger entry does not fade or slide in — it is posted: it sits low and
+ * dim, then snaps up to full value in one short, sharp step, the way a total
+ * updates when a new line is added. Nothing overshoots and nothing drifts.
+ * ------------------------------------------------------------------------ */
+
+@keyframes post-in {
+  from { opacity: 0; transform: translateY(6px); }
+  70% { opacity: 0.5; }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rule-post { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes post-in { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
+  @keyframes rule-post { from { transform: none; } to { transform: none; } }
+}
+
+/* Driven by a data attribute the observer writes. Unlayered so a Tailwind
+   opacity utility cannot outrank the resting state. */
+[data-post] { opacity: 0; }
+[data-post][data-seen] {
+  animation: post-in 380ms var(--ease-post) var(--post-delay, 0ms) both;
+}
+[data-post-rule] { transform: scaleX(0); }
+[data-post-rule][data-seen] {
+  animation: rule-post 420ms var(--ease-post) var(--post-delay, 0ms) both;
+}
+
+/* ---------------------------------------------------------------------------
+ * Arabic corrections. Keyed off [dir], never [lang] — browser translation
+ * rewrites lang. Unlayered so they outrank Tailwind utilities.
+ * ------------------------------------------------------------------------ */
+
+html[dir="ltr"] .text-hero { line-height: 1.05; letter-spacing: -0.01em; }
+html[dir="rtl"] .text-hero {
+  font-size: clamp(1.9rem, 4.6vw, 3.8rem);
+  line-height: 1.5;
+}
+html[dir="ltr"] .text-display { line-height: 1.12; }
+html[dir="rtl"] .text-display {
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  line-height: 1.5;
+}
+
+html[dir="rtl"] [class*="tracking-["],
+html[dir="rtl"] .tracking-widest,
+html[dir="rtl"] .tracking-wider { letter-spacing: 0; }
+
+.fine { font-size: 0.78rem; line-height: 1.65; }
+html[dir="rtl"] .fine { font-size: 0.82rem; line-height: 1.85; }
+
+html[dir="rtl"] .text-lead { font-size: clamp(1.02rem, 1.15vw, 1.18rem); line-height: 1.95; }
+
+/* Marque names, model names, trims, figures and phone numbers stay Latin and
+   LTR inside Arabic copy — "1,020 hp" must not reorder. */
+.latin {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--font-body);
+}
+html[dir="rtl"] .latin { text-align: right; }
