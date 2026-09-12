@@ -104,9 +104,7 @@ export const en: TeacherContent = {
   },
 
   footer: {
-    disclaimer:
-      "A concept design, built as a demonstration. Not an official Teacher Motors site, and not affiliated with them. All photography, marks and quoted copy belong to Teacher Motors.",
-    rights: "Concept by Claude",
+    rights: "© Teacher Motors. All rights reserved.",
   },
 
   a11y: {

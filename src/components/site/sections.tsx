@@ -538,7 +538,6 @@ export function Footer() {
           <span className="font-display text-[0.94rem] font-semibold text-ink">{c.brand.name}</span>
           <span className="fine text-ink-2">{c.brand.tagline}</span>
         </div>
-        <p className="fine max-w-[64ch] text-ink-2">{c.footer.disclaimer}</p>
         <p className="fine text-ink-2">{c.footer.rights}</p>
       </div>
     </footer>
